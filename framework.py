@@ -19,14 +19,14 @@ class ArgumentationFramework:
         self._Ar = set(Ar)
         self._df = set(df)
 
-    def A_plus(self, A):
+    def plus(self, A):
         """
         A+ = { B | A def B }
         Returns all arguments defeated by A
         """
         return set(map(lambda l: l[1], filter(lambda x: x[0] == A, self._df)))
 
-    def A_minus(self, A):
+    def minus(self, A):
         """
         A- = { B | B def A }
         Returns all arguments that defeat A
@@ -54,12 +54,15 @@ class ArgumentationFramework:
         Args is said to defend B iff B- is in Args+
         Returns True if Args defends B, False otherwise
         """
-        raise NotImplementedError("defended_by")
+        return self.minus(B).issubset(self.args_plus(Args))
+
 
     def F(self, Args):
         """F: 2**Ar -> 2**Ar
         F(Args) = { A | A is defended by Args }
         """
+        # Filters out all arguments that defended by Args
+        return filter(lambda x: self.defends(Args, x), self._Ar)
 
 class TestArgumentationFramework(TestCase):
 
