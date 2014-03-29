@@ -1,8 +1,21 @@
 from unittest import TestCase
 
 class ArgumentationFramework:
+    """
+    If one abstracts from the internal structure of an argument, as well as
+    from the reasons why they defeat each other, what is left is called an
+    argumentation framework: An argumentation framework simply consists of a
+    set of (abstract) arguments and a binary defeat relation between these
+    arguments.
+    -- Caminada, A Gentle Introduction to Argumentation Semantics, Summer 2008
+    """
 
     def __init__(self, Ar, df):
+        """
+        Takes the sets Ar and ``def''
+        Ar is a set of arguments
+        ``def'' is a set of two-tuples in the form (attacker, attackee)
+        """
         self._Ar = set(Ar)
         self._df = set(df)
 
