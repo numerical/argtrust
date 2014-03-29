@@ -55,11 +55,23 @@ class ArgumentationFramework:
         """
         return self.minus(B).issubset(self.args_plus(Args))
 
-
     def F(self, Args):
         """F: 2**Ar -> 2**Ar
         F(Args) = { A | A is defended by Args }
         """
         # Filters out all arguments that defended by Args
         return filter(lambda x: self.defends(Args, x), self._Ar)
+
+    def grounded_extension(self):
+        raise NotImplementedError("grounded")
+
+    def stable_extension(self):
+        raise NotImplementedError("stable")
+
+    def semistable_extension(self):
+        raise NotImplementedError("semistable")
+
+    def preferred_extension(self):
+        raise NotImplementedError("preferred")
+
 
