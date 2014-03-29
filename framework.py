@@ -48,6 +48,12 @@ class ArgumentationFramework:
         return set(map(lambda x: x[0],
             filter(lambda l: l[1] in Args, self._df)))
 
+    def conflict_free(self, Args):
+        """
+        Args is said to be conflict-free iff Args intersect Args+ is empty
+        """
+        return Args.intersect(self.args_plus(Args)).issubset(set())
+
     def defends(self, Args, B):
         """
         Args is said to defend B iff B- is in Args+
@@ -62,16 +68,43 @@ class ArgumentationFramework:
         # Filters out all arguments that defended by Args
         return filter(lambda x: self.defends(Args, x), self._Ar)
 
+    def admissible(self, Args):
+        """
+        Args is said to be admissible iff Args is conflict-free
+        and args is a subset of F(Args)
+        """
+        return self.conflict_free(Args) and Args.issubset(self.F(Args))
+
     def grounded_extension(self):
+        """
+        Minimal fixpoint of F
+        """
         raise NotImplementedError("grounded")
 
-    def stable_extension(self):
-        raise NotImplementedError("stable")
+    def preferred_extension(self):
+        """
+        Maximal admissible set
+        """
+        raise NotImplementedError("preferred")
 
     def semistable_extension(self):
+        """
+        Admissible set with maximum Args union Args+
+        complete extension with max Args union Args+
+        """
         raise NotImplementedError("semistable")
 
-    def preferred_extension(self):
-        raise NotImplementedError("preferred")
+    def stable_extension(self):
+        """
+        Args defeating exactly Ar\Args
+        conflict-free Args defeating Ar\Args
+        admissible set Args defeating Ar\Args
+        complete extension Args defeating Ar\Args
+        preferred extension Args defeating Ar\Args
+        semi-stable extension Args defeating Ar\Args
+        """
+        raise NotImplementedError("stable")
+
+
 
 
