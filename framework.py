@@ -36,16 +36,18 @@ class ArgumentationFramework:
     def args_plus(self, Args):
         """
         Args+ = { B | A def B for some A in Args }
-        Returns all arguments that defeat an argument
+        Returns all arguments that are defeated by an argument in Args
         """
-        raise NotImplementedError("args_plus")
+        return set(map(lambda x: x[1],
+            filter(lambda l: l[0] in Args, self._df)))
 
     def args_minus(self, Args):
         """
         Args- = { B | B def A for some A in Args }
-        Returns all arguments that are defeated by an argument
+        Returns all arguments that defeat an argument in Args
         """
-        raise NotImplementedError("args_minus")
+        return set(map(lambda x: x[0],
+            filter(lambda l: l[1] in Args, self._df)))
 
     def defends(self, Args, B):
         """
