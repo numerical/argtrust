@@ -72,7 +72,7 @@ class ArgumentationFramework:
         Args is said to be conflict-free iff Args intersect Args+ is empty
         """
         assert Args.issubset(self._Ar)
-        return Args.intersect(self.args_plus(Args)).issubset(set())
+        return Args.intersection(self.args_plus(Args)).issubset(set())
 
     def defends(self, Args, B):
         """
