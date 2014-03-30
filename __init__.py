@@ -1,0 +1,3 @@
+
+class BadImplementationError(Exception):
+    pass
