@@ -39,10 +39,18 @@ class TestArgumentationFramework(unittest.TestCase):
         self.assertEqual(self.fig1.plus('C'), {'B'})
 
     def test_args_plus(self):
-        pass
+        self.assertEqual(self.fig1.args_plus({'A', 'B'}), {'A'})
+        self.assertEqual(self.fig2.args_plus({'A', 'B'}), {'B', 'C'})
+        self.assertEqual(self.fig3.args_plus({'A', 'B'}), {'A', 'B'})
+        self.assertEqual(self.fig4.args_plus({'B', 'C'}), {'B', 'C', 'D'})
 
     def test_args_minus(self):
-        pass
+        self.assertEqual(self.fig1.args_minus({'B'}), {'C'})
+        self.assertEqual(self.fig3.args_minus({'A', 'B'}), {'A', 'B'})
+        self.assertEqual(self.fig4.args_minus({'A', 'D', 'B'}), {'A', 'C'})
+        self.assertEqual(self.fig5.args_minus({'C', 'D'}), {'C', 'D', 'B'})
+        self.assertEqual(self.fig6.args_minus({'A', 'B', 'C', 'D'}), {'A', 'C', 'B'})
+
 
     def test_defends(self):
         pass
