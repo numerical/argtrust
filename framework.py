@@ -1,3 +1,4 @@
+from itertools import combinations
 
 class ArgumentationFramework:
     """
@@ -18,11 +19,26 @@ class ArgumentationFramework:
         self._Ar = set(Ar)
         self._df = set(df)
 
+    def __len__(self):
+        """Return the amount of arguments for len(ArgumentationFramework)"""
+        return len(self._Ar)
+
+    def make_generator(self, up=True):
+        if up:
+            for i in range(len(self._Ar)+1):
+                for j in combinations(self._Ar, i):
+                    yield set(j)
+        else:
+            for i in range(len(self._Ar), -1, -1): # iterate from top to bottom
+                for j in combinations(self._Ar, i):
+                    yield set(j)
+
     def plus(self, A):
         """
         A+ = { B | A def B }
         Returns all arguments defeated by A
         """
+        assert A in self._Ar
         return set(map(lambda l: l[1], filter(lambda x: x[0] == A, self._df)))
 
     def minus(self, A):
@@ -30,6 +46,7 @@ class ArgumentationFramework:
         A- = { B | B def A }
         Returns all arguments that defeat A
         """
+        assert A in self._Ar
         return set(map(lambda l: l[0], filter(lambda x: x[1] == A, self._df)))
 
     def args_plus(self, Args):
@@ -37,6 +54,7 @@ class ArgumentationFramework:
         Args+ = { B | A def B for some A in Args }
         Returns all arguments that are defeated by an argument in Args
         """
+        assert Args.issubset(self._Ar)
         return set(map(lambda x: x[1],
             filter(lambda l: l[0] in Args, self._df)))
 
@@ -45,6 +63,7 @@ class ArgumentationFramework:
         Args- = { B | B def A for some A in Args }
         Returns all arguments that defeat an argument in Args
         """
+        assert Args.issubset(self._Ar)
         return set(map(lambda x: x[0],
             filter(lambda l: l[1] in Args, self._df)))
 
@@ -52,6 +71,7 @@ class ArgumentationFramework:
         """
         Args is said to be conflict-free iff Args intersect Args+ is empty
         """
+        assert Args.issubset(self._Ar)
         return Args.intersect(self.args_plus(Args)).issubset(set())
 
     def defends(self, Args, B):
@@ -59,12 +79,15 @@ class ArgumentationFramework:
         Args is said to defend B iff B- is in Args+
         Returns True if Args defends B, False otherwise
         """
+        assert Args.issubset(self._Ar)
+        assert B in self._Ar
         return self.minus(B).issubset(self.args_plus(Args))
 
     def F(self, Args):
         """F: 2**Ar -> 2**Ar
         F(Args) = { A | A is defended by Args }
         """
+        assert Args.issubset(self._Ar)
         # Filters out all arguments that defended by Args
         return filter(lambda x: self.defends(Args, x), self._Ar)
 
@@ -73,6 +96,7 @@ class ArgumentationFramework:
         Args is said to be admissible iff Args is conflict-free
         and args is a subset of F(Args)
         """
+        assert Args.issubset(self._Ar)
         return self.conflict_free(Args) and Args.issubset(self.F(Args))
 
     def grounded_extension(self):
