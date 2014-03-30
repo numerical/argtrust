@@ -24,6 +24,10 @@ class ArgumentationFramework:
         return len(self._Ar)
 
     def make_generator(self, up=True):
+        """Returns a generator that cycles through every combination of Ar
+        if up is True starts generating from the empty set to Ar, otherwise
+        starts generating from Ar to the empty set
+        """
         if up:
             for i in range(len(self._Ar)+1):
                 for j in combinations(self._Ar, i):
@@ -103,6 +107,10 @@ class ArgumentationFramework:
         """
         Minimal fixpoint of F
         """
+        generator = self.make_generator()
+        for Args in generator:
+            if Args == self.F(Args):
+                return Args
         raise NotImplementedError("grounded")
 
     def preferred_extension(self):
