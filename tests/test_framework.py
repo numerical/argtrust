@@ -28,6 +28,9 @@ class TestArgumentationFramework(unittest.TestCase):
         self.fig6 = ArgumentationFramework( {'A', 'B', 'C', 'D'},
                 { ('A', 'A'), ('A', 'C'), ('B', 'C'), ('C', 'D') })
 
+    def test_make_generator(self):
+        raise NotImplementedError
+
     def test_minus(self):
         self.assertEqual(self.fig1.minus('A'), {'B'})
         self.assertEqual(self.fig1.minus('B'), {'C'})
@@ -51,12 +54,17 @@ class TestArgumentationFramework(unittest.TestCase):
         self.assertEqual(self.fig5.args_minus({'C', 'D'}), {'C', 'D', 'B'})
         self.assertEqual(self.fig6.args_minus({'A', 'B', 'C', 'D'}), {'A', 'C', 'B'})
 
+    def test_conflict_free(self):
+        raise NotImplementedError
 
     def test_defends(self):
-        pass
+        raise NotImplementedError
 
     def test_F(self):
-        pass
+        raise NotImplementedError
+
+    def test_admissible(self):
+        raise NotImplementedError
 
 
 if __name__ == "__main__":
