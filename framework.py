@@ -1,4 +1,5 @@
 from itertools import combinations
+from . import BadImplementationError
 
 class ArgumentationFramework:
     """
@@ -106,18 +107,34 @@ class ArgumentationFramework:
     def grounded_extension(self):
         """
         Minimal fixpoint of F
+        There is guaranteed to be a smallest fixpoint by the Knaster-Tarski
+        theorem. Function will raise BadImplementationError
+        (I scold myself daily) if the minimal fixpoint was not found
         """
         generator = self.make_generator()
         for Args in generator:
             if Args == self.F(Args):
                 return Args
-        raise NotImplementedError("grounded")
+        raise BadImplementationError("Minimal fixpoint exists but wasn't found")
 
     def preferred_extension(self):
         """
         Maximal admissible set
         """
-        raise NotImplementedError("preferred")
+        max_admissible = 0
+        returnable = set()
+        generator = self.make_generator(up=False)
+        while True:
+            try:
+                s = next(generator)
+                if len(s) < max_admissible:
+                    return returnable
+                if self.admissible(s):
+                    max_admissible = len(s)
+                    returnable.add(frozenset(s))
+            except StopIteration: # No more sets to check
+                break
+        return returnable
 
     def semistable_extension(self):
         """
