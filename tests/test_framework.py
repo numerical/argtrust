@@ -103,10 +103,22 @@ class TestArgumentationFramework(unittest.TestCase):
         self.assertFalse(self.fig6.admissible({'A', 'B', 'D'}))
 
     def test_grounded_extension(self):
-        raise NotImplementedError
+        self.assertEqual(self.fig0.grounded_extension(), set())
+        self.assertEqual(self.fig1.grounded_extension(), {'A','C'})
+        self.assertEqual(self.fig2.grounded_extension(), set())
+        self.assertEqual(self.fig3.grounded_extension(), set())
+        self.assertEqual(self.fig4.grounded_extension(), {'A', 'C'})
+        self.assertEqual(self.fig5.grounded_extension(), {'A'})
+        self.assertEqual(self.fig6.grounded_extension(), {'B', 'D'})
 
     def test_preferred_extension(self):
-        raise NotImplementedError
+        self.assertEqual(self.fig0.preferred_extension(), {frozenset()})
+        self.assertEqual(self.fig1.preferred_extension(), {frozenset({'A', 'C'})})
+        self.assertEqual(self.fig2.preferred_extension(), {frozenset()})
+        self.assertEqual(self.fig3.preferred_extension(), {frozenset({'A'}), frozenset({'B'})})
+        self.assertEqual(self.fig4.preferred_extension(), {frozenset({'A', 'C'})})
+        self.assertEqual(self.fig5.preferred_extension(), {frozenset({'A', 'C', 'E'})})
+        self.assertEqual(self.fig6.preferred_extension(), {frozenset({'B', 'D'})})
 
     def test_semistable_extension(self):
         raise NotImplementedError
