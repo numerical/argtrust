@@ -94,7 +94,7 @@ class ArgumentationFramework:
         """
         assert Args.issubset(self._Ar)
         # Filters out all arguments that defended by Args
-        return filter(lambda x: self.defends(Args, x), self._Ar)
+        return set(filter(lambda x: self.defends(Args, x), self._Ar))
 
     def admissible(self, Args):
         """
