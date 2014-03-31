@@ -143,18 +143,31 @@ class ArgumentationFramework:
         Admissible set with maximum Args union Args+
         complete extension with max Args union Args+
         """
-        raise NotImplementedError("semistable")
+        maximized = -1
+        returnable = set()
+        preferred = self.preferred_extension()
+        for Args in preferred:
+            a_size = len(Args.union(self.args_plus(Args)))
+            if a_size > maximized:
+                maximized = a_size
+                returnable = {frozenset(Args)}
+            elif a_size == maximized:
+                returnable.add(frozenset(Args))
+        return returnable
 
     def stable_extension(self):
         """
         Args defeating exactly Ar\Args
-        conflict-free Args defeating Ar\Args
-        admissible set Args defeating Ar\Args
-        complete extension Args defeating Ar\Args
-        preferred extension Args defeating Ar\Args
-        semi-stable extension Args defeating Ar\Args
+        Args is a stable extension iff Args+ = Ar \ Args
         """
-        raise NotImplementedError("stable")
+        preffered = self.semistable_extension()
+        returnable = set()
+        for Args in preferred:
+            plus = self.args_plus(Args)
+            if plus == self._Ar.difference(Args):
+                returnable.add(Args)
+
+        return returnable
 
 
 
