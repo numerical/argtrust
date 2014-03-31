@@ -102,6 +102,18 @@ class TestArgumentationFramework(unittest.TestCase):
         self.assertFalse(self.fig2.admissible({'C'}))
         self.assertFalse(self.fig6.admissible({'A', 'B', 'D'}))
 
+    def test_grounded_extension(self):
+        raise NotImplementedError
+
+    def test_preferred_extension(self):
+        raise NotImplementedError
+
+    def test_semistable_extension(self):
+        raise NotImplementedError
+
+    def test_stable_extension(self):
+        raise NotImplementedError
+
 if __name__ == "__main__":
     unittest.main()
 
