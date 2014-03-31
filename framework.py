@@ -120,6 +120,8 @@ class ArgumentationFramework:
     def preferred_extension(self):
         """
         Maximal admissible set
+        Returns a set of frozensets (this is a python requirement since sets
+        are not hashable)
         """
         max_admissible = 0
         returnable = set()
