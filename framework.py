@@ -44,7 +44,7 @@ class ArgumentationFramework:
         Returns all arguments defeated by A
         """
         assert A in self._Ar
-        return set(map(lambda l: l[1], filter(lambda x: x[0] == A, self._df)))
+        return {l[1] for l in filter(lambda x: x[0] == A, self._df)}
 
     def minus(self, A):
         """
@@ -52,7 +52,7 @@ class ArgumentationFramework:
         Returns all arguments that defeat A
         """
         assert A in self._Ar
-        return set(map(lambda l: l[0], filter(lambda x: x[1] == A, self._df)))
+        return {l[0] for l in filter(lambda x: x[1] == A, self._df)}
 
     def args_plus(self, Args):
         """
@@ -60,8 +60,7 @@ class ArgumentationFramework:
         Returns all arguments that are defeated by an argument in Args
         """
         assert Args.issubset(self._Ar)
-        return set(map(lambda x: x[1],
-            filter(lambda l: l[0] in Args, self._df)))
+        return {x[1] for x in filter(lambda l: l[0] in Args, self._df)}
 
     def args_minus(self, Args):
         """
@@ -69,8 +68,7 @@ class ArgumentationFramework:
         Returns all arguments that defeat an argument in Args
         """
         assert Args.issubset(self._Ar)
-        return set(map(lambda x: x[0],
-            filter(lambda l: l[1] in Args, self._df)))
+        return {x[0] for x in filter(lambda l: l[1] in Args, self._df)}
 
     def conflict_free(self, Args):
         """
