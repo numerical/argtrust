@@ -121,10 +121,16 @@ class TestArgumentationFramework(unittest.TestCase):
         self.assertEqual(self.fig6.preferred_extension(), {frozenset({'B', 'D'})})
 
     def test_semistable_extension(self):
-        raise NotImplementedError
+        self.assertEqual(self.fig0.semistable_extension(), {frozenset()})
+        self.assertEqual(self.fig1.semistable_extension(), {frozenset({'C', 'A'})})
+        self.assertEqual(self.fig2.semistable_extension(), {frozenset()})
+        self.assertEqual(self.fig3.semistable_extension(), { frozenset({'A'}), frozenset({'B'}) })
 
     def test_stable_extension(self):
-        raise NotImplementedError
+        self.assertEqual(self.fig0.stable_extension(), {frozenset()})
+        self.assertEqual(self.fig1.stable_extension(), {frozenset({'A', 'C'})})
+        self.assertEqual(self.fig2.stable_extension(), set())
+        self.assertEqual(self.fig3.stable_extension(), {frozenset({'A'}), frozenset({'B'})})
 
 if __name__ == "__main__":
     unittest.main()
