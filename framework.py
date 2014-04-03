@@ -158,7 +158,7 @@ class ArgumentationFramework:
         Args defeating exactly Ar\Args
         Args is a stable extension iff Args+ = Ar \ Args
         """
-        preffered = self.semistable_extension()
+        preferred = self.semistable_extension()
         returnable = set()
         for Args in preferred:
             plus = self.args_plus(Args)
