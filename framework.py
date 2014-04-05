@@ -1,5 +1,9 @@
 from itertools import combinations
 from . import BadImplementationError
+try:
+    import pydot
+except ImportError:
+    print ("Unable to import pydot. pydot support not enabled")
 
 class ArgumentationFramework:
     """
@@ -167,6 +171,42 @@ class ArgumentationFramework:
 
         return returnable
 
+    def print_dot_graph(self, path):
+        """Prints the framework to a file.
+        Writes using extension for type of file to write.
+        If extension isn't known defaults to .png
 
+        Possible formats:
+        jpg
+        jpeg
+        png
+        pdf
+        ps
+        """
+        if len(self._df) == 0:
+            print("Cannot print empty Argumentation Framework")
+            return
+        try:
+            graph = pydot.graph_from_edges(self._df, directed=True)
+        except NameError:
+            print("pydot not found")
+            return
 
+        func = graph.write_png
+        if path.endswith('.jpg'):
+            func = graph.write_jpg
+        elif path.endswith('.jpeg'):
+            func = graph.write_jpeg
+        elif path.endswith('.png'):
+            func = graph.write_png
+        elif path.endswith('.pdf'):
+            func = graph.write_pdf
+        elif path.endswith('.ps'):
+            func = graph.write_ps
+        else:
+            path = path + ".png"
 
+        if not func(path):
+            print("Could not print")
+
+        return
