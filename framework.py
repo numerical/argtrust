@@ -23,6 +23,9 @@ class ArgumentationFramework:
         """
         self._Ar = set(Ar)
         self._df = set(df)
+        for attack in self._df:
+            assert attack[0] in self._Ar
+            assert attack[1] in self._Ar
 
     def __len__(self):
         """Return the amount of arguments for len(ArgumentationFramework)"""
@@ -171,28 +174,33 @@ class ArgumentationFramework:
 
         return returnable
 
-    def print_dot_graph(self, path):
+    def print_dot_graph(self, path, Args=[]):
         """Prints the framework to a file.
         Writes using extension for type of file to write.
-        If extension isn't known defaults to .png
+        If extension isn't known defaults to pdf
+        If Args is given marks all elements of Args with a doublecircle
 
         Possible formats:
-        jpg
-        jpeg
-        png
-        pdf
-        ps
+        jpg, jpeg, png, pdf, ps
         """
-        if len(self._df) == 0:
-            print("Cannot print empty Argumentation Framework")
-            return
+
         try:
-            graph = pydot.graph_from_edges(self._df, directed=True)
+            graph = pydot.Dot()
         except NameError:
-            print("pydot not found")
+            print("Not able to import pydot. This functionality will not work.")
             return
 
-        func = graph.write_png
+        for arg in self._Ar:
+            graph.add_node(pydot.Node(str(arg), shape='circle'))
+
+        for attack in self._df:
+            graph.add_edge(pydot.Edge(str(attack[0]), str(attack[1])))
+
+        for arg in Args:
+            graph.get_node(str(arg)).pop().set_shape('doublecircle')
+
+
+        func = graph.write_pdf
         if path.endswith('.jpg'):
             func = graph.write_jpg
         elif path.endswith('.jpeg'):
