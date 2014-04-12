@@ -212,7 +212,7 @@ class ArgumentationFramework:
         elif path.endswith('.ps'):
             func = graph.write_ps
         else:
-            path = path + ".png"
+            path = path + ".pdf"
 
         if not func(path):
             print("Could not print")
