@@ -1,9 +1,12 @@
 from itertools import combinations
+from collections import namedtuple
 from . import BadImplementationError
 try:
     import pydot
 except ImportError:
     print ("Unable to import pydot. pydot support not enabled")
+
+Attack = namedtuple('Attack', ['attacker', 'attacked'])
 
 class ArgumentationFramework:
     """
@@ -22,10 +25,10 @@ class ArgumentationFramework:
         ``def'' is a set of two-tuples in the form (attacker, attackee)
         """
         self._Ar = set(Ar)
-        self._df = set(df)
+        self._df = {Attack(*d) for d in df}
         for attack in self._df:
-            assert attack[0] in self._Ar
-            assert attack[1] in self._Ar
+            assert attack.attacker in self._Ar
+            assert attack.attacked in self._Ar
 
     def __len__(self):
         """Return the amount of arguments for len(ArgumentationFramework)"""
@@ -51,7 +54,7 @@ class ArgumentationFramework:
         Returns all arguments defeated by A
         """
         assert A in self._Ar
-        return {l[1] for l in filter(lambda x: x[0] == A, self._df)}
+        return {l.attacked for l in filter(lambda x: x.attacker == A, self._df)}
 
     def minus(self, A):
         """
@@ -59,28 +62,34 @@ class ArgumentationFramework:
         Returns all arguments that defeat A
         """
         assert A in self._Ar
-        return {l[0] for l in filter(lambda x: x[1] == A, self._df)}
+        return {l.attacker for l in filter(lambda x: x.attacked == A, self._df)}
 
     def args_plus(self, Args):
         """
         Args+ = { B | A def B for some A in Args }
         Returns all arguments that are defeated by an argument in Args
         """
+        if type(Args) is not set:
+            Args = set(Args)
         assert Args.issubset(self._Ar)
-        return {x[1] for x in filter(lambda l: l[0] in Args, self._df)}
+        return {x.attacked for x in filter(lambda l: l.attacker in Args, self._df)}
 
     def args_minus(self, Args):
         """
         Args- = { B | B def A for some A in Args }
         Returns all arguments that defeat an argument in Args
         """
+        if type(Args) is not set:
+            Args = set(Args)
         assert Args.issubset(self._Ar)
-        return {x[0] for x in filter(lambda l: l[1] in Args, self._df)}
+        return {x.attacker for x in filter(lambda l: l.attacked in Args, self._df)}
 
     def conflict_free(self, Args):
         """
         Args is said to be conflict-free iff Args intersect Args+ is empty
         """
+        if type(Args) is not set:
+            Args = set(Args)
         assert Args.issubset(self._Ar)
         return Args.intersection(self.args_plus(Args)).issubset(set())
 
@@ -89,6 +98,8 @@ class ArgumentationFramework:
         Args is said to defend B iff B- is in Args+
         Returns True if Args defends B, False otherwise
         """
+        if type(Args) is not set:
+            Args = set(Args)
         assert Args.issubset(self._Ar)
         assert B in self._Ar
         return self.minus(B).issubset(self.args_plus(Args))
@@ -97,6 +108,8 @@ class ArgumentationFramework:
         """F: 2**Ar -> 2**Ar
         F(Args) = { A | A is defended by Args }
         """
+        if type(Args) is not set:
+            Args = set(Args)
         assert Args.issubset(self._Ar)
         # Filters out all arguments that defended by Args
         return set(filter(lambda x: self.defends(Args, x), self._Ar))
@@ -106,6 +119,8 @@ class ArgumentationFramework:
         Args is said to be admissible iff Args is conflict-free
         and args is a subset of F(Args)
         """
+        if type(Args) is not set:
+            Args = set(Args)
         assert Args.issubset(self._Ar)
         return self.conflict_free(Args) and Args.issubset(self.F(Args))
 
@@ -174,7 +189,7 @@ class ArgumentationFramework:
 
         return returnable
 
-    def print_dot_graph(self, path, Args=[]):
+    def print_dot_graph(self, path, Args=set()):
         """Prints the framework to a file.
         Writes using extension for type of file to write.
         If extension isn't known defaults to pdf
@@ -183,6 +198,8 @@ class ArgumentationFramework:
         Possible formats:
         jpg, jpeg, png, pdf, ps
         """
+        if type(Args) is not set:
+            Args = set(Args)
 
         try:
             graph = pydot.Dot()
@@ -194,7 +211,7 @@ class ArgumentationFramework:
             graph.add_node(pydot.Node(str(arg), shape='circle'))
 
         for attack in self._df:
-            graph.add_edge(pydot.Edge(str(attack[0]), str(attack[1])))
+            graph.add_edge(pydot.Edge(str(attack.attacker), str(attack.attacked)))
 
         for arg in Args:
             graph.get_node(str(arg)).pop().set_shape('doublecircle')
