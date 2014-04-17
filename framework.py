@@ -6,6 +6,7 @@ try:
 except ImportError:
     print ("Unable to import pydot. pydot support not enabled")
 
+Labelling = namedtuple('Labelling', ['in', 'out', 'undecided'])
 Attack = namedtuple('Attack', ['attacker', 'attacked'])
 
 class ArgumentationFramework:
@@ -105,14 +106,16 @@ class ArgumentationFramework:
         return self.minus(B).issubset(self.args_plus(Args))
 
     def F(self, Args):
-        """F: 2**Ar -> 2**Ar
+        """
+        Characteristic function of an ArgumentationFramework
+        F: 2**Ar -> 2**Ar
         F(Args) = { A | A is defended by Args }
         """
         if type(Args) is not set:
             Args = set(Args)
         assert Args.issubset(self._Ar)
         # Filters out all arguments that defended by Args
-        return set(filter(lambda x: self.defends(Args, x), self._Ar))
+        return {x for x in self._Ar if self.defends(Args, x)}
 
     def admissible(self, Args):
         """
@@ -123,6 +126,18 @@ class ArgumentationFramework:
             Args = set(Args)
         assert Args.issubset(self._Ar)
         return self.conflict_free(Args) and Args.issubset(self.F(Args))
+
+    def complete_extension(self):
+        generator = self.make_generator()
+        retval = set()
+        while True:
+            try:
+                s = next(generator)
+                if self.F(s) == s:
+                    retval.add(frozenset(s))
+            except StopIteration:
+                break
+        return retval
 
     def grounded_extension(self):
         """
@@ -144,19 +159,19 @@ class ArgumentationFramework:
         are not hashable)
         """
         max_admissible = 0
-        returnable = set()
+        retval = set()
         generator = self.make_generator(up=False)
         while True:
             try:
                 s = next(generator)
                 if len(s) < max_admissible:
-                    return returnable
+                    return retval
                 if self.admissible(s):
                     max_admissible = len(s)
-                    returnable.add(frozenset(s))
+                    retval.add(frozenset(s))
             except StopIteration: # No more sets to check
                 break
-        return returnable
+        return retval
 
     def semistable_extension(self):
         """
@@ -164,16 +179,16 @@ class ArgumentationFramework:
         complete extension with max Args union Args+
         """
         maximized = -1
-        returnable = set()
+        retval = set()
         preferred = self.preferred_extension()
         for Args in preferred:
             a_size = len(Args.union(self.args_plus(Args)))
             if a_size > maximized:
                 maximized = a_size
-                returnable = {frozenset(Args)}
+                retval = {frozenset(Args)}
             elif a_size == maximized:
-                returnable.add(frozenset(Args))
-        return returnable
+                retval.add(frozenset(Args))
+        return retval
 
     def stable_extension(self):
         """
@@ -181,13 +196,13 @@ class ArgumentationFramework:
         Args is a stable extension iff Args+ = Ar \ Args
         """
         preferred = self.semistable_extension()
-        returnable = set()
+        retval = set()
         for Args in preferred:
             plus = self.args_plus(Args)
             if plus == self._Ar.difference(Args):
-                returnable.add(Args)
+                retval.add(Args)
 
-        return returnable
+        return retval
 
     def print_dot_graph(self, path, Args=set()):
         """Prints the framework to a file.
