@@ -1,13 +1,15 @@
-from itertools import combinations
-from collections import namedtuple
+from itertools import combinations as _combinations
+from collections import namedtuple as _namedtuple
 from . import BadImplementationError
 try:
     import pydot
 except ImportError:
     print ("Unable to import pydot. pydot support not enabled")
 
-Labelling = namedtuple('Labelling', ['in', 'out', 'undecided'])
-Attack = namedtuple('Attack', ['attacker', 'attacked'])
+# the labelling "in" is illegal in python because 'in' is a reserved keyword in
+# python
+Labelling = _namedtuple('Labelling', ['inside', 'outside', 'undecided'])
+Attack = _namedtuple('Attack', ['attacker', 'attacked'])
 
 class ArgumentationFramework:
     """
@@ -42,11 +44,11 @@ class ArgumentationFramework:
         """
         if up:
             for i in range(len(self._Ar)+1):
-                for j in combinations(self._Ar, i):
+                for j in _combinations(self._Ar, i):
                     yield set(j)
         else:
             for i in range(len(self._Ar), -1, -1): # iterate from top to bottom
-                for j in combinations(self._Ar, i):
+                for j in _combinations(self._Ar, i):
                     yield set(j)
 
     def plus(self, A):
