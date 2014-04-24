@@ -37,6 +37,9 @@ class ArgumentationFramework:
         """Return the amount of arguments for len(ArgumentationFramework)"""
         return len(self._Ar)
 
+    def __iter__(self):
+        return iter(self._Ar)
+
     def make_generator(self, up=True):
         """Returns a generator that cycles through every combination of Ar
         if up is True starts generating from the empty set to Ar, otherwise
