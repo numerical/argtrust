@@ -112,25 +112,25 @@ class TestArgumentationFramework(unittest.TestCase):
         self.assertEqual(self.fig6.grounded_extension(), {'B', 'D'})
 
     def test_preferred_extension(self):
-        self.assertEqual(self.fig0.preferred_extension(), {frozenset()})
-        self.assertEqual(self.fig1.preferred_extension(), {frozenset({'A', 'C'})})
-        self.assertEqual(self.fig2.preferred_extension(), {frozenset()})
-        self.assertEqual(self.fig3.preferred_extension(), {frozenset({'A'}), frozenset({'B'})})
-        self.assertEqual(self.fig4.preferred_extension(), {frozenset({'A', 'C'})})
-        self.assertEqual(self.fig5.preferred_extension(), {frozenset({'A', 'C', 'E'})})
-        self.assertEqual(self.fig6.preferred_extension(), {frozenset({'B', 'D'})})
+        self.assertCountEqual(self.fig0.preferred_extension(), [set()])
+        self.assertCountEqual(self.fig1.preferred_extension(), [{'A', 'C'}])
+        self.assertCountEqual(self.fig2.preferred_extension(), [set()])
+        self.assertCountEqual(self.fig3.preferred_extension(), [{'A'}, {'B'}])
+        self.assertCountEqual(self.fig4.preferred_extension(), [{'A', 'C'}])
+        self.assertCountEqual(self.fig5.preferred_extension(), [{'A', 'C', 'E'}])
+        self.assertCountEqual(self.fig6.preferred_extension(), [{'B', 'D'}])
 
     def test_semistable_extension(self):
-        self.assertEqual(self.fig0.semistable_extension(), {frozenset()})
-        self.assertEqual(self.fig1.semistable_extension(), {frozenset({'C', 'A'})})
-        self.assertEqual(self.fig2.semistable_extension(), {frozenset()})
-        self.assertEqual(self.fig3.semistable_extension(), { frozenset({'A'}), frozenset({'B'}) })
+        self.assertCountEqual(self.fig0.semistable_extension(), [set()])
+        self.assertCountEqual(self.fig1.semistable_extension(), [{'C', 'A'}])
+        self.assertCountEqual(self.fig2.semistable_extension(), [set()])
+        self.assertCountEqual(self.fig3.semistable_extension(), [ {'A'}, {'B'} ])
 
     def test_stable_extension(self):
-        self.assertEqual(self.fig0.stable_extension(), {frozenset()})
-        self.assertEqual(self.fig1.stable_extension(), {frozenset({'A', 'C'})})
-        self.assertEqual(self.fig2.stable_extension(), set())
-        self.assertEqual(self.fig3.stable_extension(), {frozenset({'A'}), frozenset({'B'})})
+        self.assertCountEqual(self.fig0.stable_extension(), [set()])
+        self.assertCountEqual(self.fig1.stable_extension(), [{'A', 'C'}])
+        self.assertCountEqual(self.fig2.stable_extension(), [])
+        self.assertCountEqual(self.fig3.stable_extension(), [{'A'}, {'B'}])
 
 if __name__ == "__main__":
     unittest.main()
