@@ -1,7 +1,8 @@
 from collections import namedtuple as _namedtuple
+from . import Trust
 import pydot as _pydot
 
-Trust = _namedtuple('Trust', ['truster', 'trusted'])
+# Trust = _namedtuple('Trust', ['truster', 'trusted'])
 
 class SocialNetwork:
     """
@@ -53,7 +54,7 @@ class SocialNetwork:
         links = {x.trusted for x in self._tau
                 if x.truster == source and x.trusted not in closed}
         if len(links) == 0: # base
-            return None
+            return []
         if destination in links: # base
             return [[Trust(source, destination)]]
         # recurse
@@ -68,8 +69,26 @@ class SocialNetwork:
             if None in path:
                 retval.remove(path)
         if len(retval) == 0:
-            return None
+            return []
         return retval
+
+    def trusts(self, truster, trustee):
+        """Returns a scalar saying how much truster trusts trustee.
+        uses transitive_operator to combine trusts in a path and paths_operator
+        to combine trust paths"""
+        assert truster in self._Ags
+        assert trustee in self._Ags
+
+        trust = 0 # MIN TRUST TODO make this a constant for other modes of trust
+        paths = self.find_paths(truster, trustee)
+        for path in paths:
+            path_trust = 1.0 # MAX TRUST TODO same as MIN TRUST
+            for link in path:
+                path_trust = self._transitive_operator(path_trust, link)
+
+            trust = self._paths_operator(trust, path_trust)
+
+        return trust
 
     def agent_centric(self, agent):
         """Given an agent returns an agent centric graph.
@@ -82,5 +101,3 @@ class SocialNetwork:
         Ags = [x for x in self._Ags if self.find_path(x) != None]
         tau = [(x, self._tr[x]) for x in self._tau if x.truster in Ags and x.trusted in Ags]
         return SocialNetwork(Ags, tau)
-
-
