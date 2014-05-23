@@ -1,6 +1,5 @@
 from itertools import combinations as _combinations
-from collections import namedtuple as _namedtuple
-from . import BadImplementationError
+from . import BadImplementationError, Argument, Labelling, Attack
 try:
     import pydot
 except ImportError:
@@ -8,8 +7,9 @@ except ImportError:
 
 # the labelling "in" is illegal in python because 'in' is a reserved keyword in
 # python
-Labelling = _namedtuple('Labelling', ['inside', 'outside', 'undecided'])
-Attack = _namedtuple('Attack', ['attacker', 'attacked'])
+# Labelling = _namedtuple('Labelling', ['inside', 'outside', 'undecided'])
+# Attack = _namedtuple('Attack', ['attacker', 'attacked'])
+# Argument = _namedtuple('Argument', ['arg', 'belief'])
 
 class ArgumentationFramework:
     """
@@ -132,7 +132,16 @@ class ArgumentationFramework:
         assert Args.issubset(self._Ar)
         return self.conflict_free(Args) and Args.issubset(self.F(Args))
 
+    def get_labelling(self, ins):
+        """Gets a complete labelling given the set of in arguments"""
+        return Labelling(ins, self.args_plus(ins),
+                self._Ar.difference(self.args_plus(ins).union(ins)))
+
     def complete_extension(self):
+        """Returns all the complete extensentions of the Framework
+        Iterates through the power set of Ags and returns all fixpoints of
+        the characteristic function F
+        """
         generator = self.make_generator()
         retval = set()
         while True:
@@ -151,11 +160,12 @@ class ArgumentationFramework:
         theorem. Function will raise BadImplementationError
         (I scold myself daily) if the minimal fixpoint was not found
         """
-        generator = self.make_generator()
-        for Args in generator:
-            if Args == self.F(Args):
-                return Args
-        raise BadImplementationError("Minimal fixpoint exists but wasn't found")
+        curr = set()
+        while True:
+            old = curr
+            curr = self.F(curr)
+            if old == curr:
+                return curr
 
     def preferred_extension(self):
         """
@@ -164,7 +174,7 @@ class ArgumentationFramework:
         are not hashable)
         """
         max_admissible = 0
-        retval = set()
+        retval = []
         generator = self.make_generator(up=False)
         while True:
             try:
@@ -173,7 +183,7 @@ class ArgumentationFramework:
                     return retval
                 if self.admissible(s):
                     max_admissible = len(s)
-                    retval.add(frozenset(s))
+                    retval.append(set(s))
             except StopIteration: # No more sets to check
                 break
         return retval
@@ -184,15 +194,15 @@ class ArgumentationFramework:
         complete extension with max Args union Args+
         """
         maximized = -1
-        retval = set()
+        retval = []
         preferred = self.preferred_extension()
         for Args in preferred:
             a_size = len(Args.union(self.args_plus(Args)))
             if a_size > maximized:
                 maximized = a_size
-                retval = {frozenset(Args)}
+                retval = [set(Args)]
             elif a_size == maximized:
-                retval.add(frozenset(Args))
+                retval.append(set(Args))
         return retval
 
     def stable_extension(self):
@@ -201,11 +211,11 @@ class ArgumentationFramework:
         Args is a stable extension iff Args+ = Ar \ Args
         """
         preferred = self.semistable_extension()
-        retval = set()
+        retval = []
         for Args in preferred:
             plus = self.args_plus(Args)
             if plus == self._Ar.difference(Args):
-                retval.add(Args)
+                retval.append(Args)
 
         return retval
 
