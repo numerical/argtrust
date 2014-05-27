@@ -84,7 +84,7 @@ class SocialNetwork:
         for path in paths:
             path_trust = 1.0 # MAX TRUST TODO same as MIN TRUST
             for link in path:
-                path_trust = self._transitive_operator(path_trust, link)
+                path_trust = self._transitive_operator(path_trust, self._tr[link])
 
             trust = self._paths_operator(trust, path_trust)
 
@@ -98,6 +98,6 @@ class SocialNetwork:
         from the agent specified"""
         if agent not in self._Ags:
             raise ValueError("No such agent in social network")
-        Ags = [x for x in self._Ags if self.find_path(x) != None]
-        tau = [(x, self._tr[x]) for x in self._tau if x.truster in Ags and x.trusted in Ags]
+        Ags = [x for x in self._Ags if x == agent or len(self.find_paths(agent, x)) != 0]
+        tau = [x + (self._tr[x],) for x in self._tau if x.truster in Ags and x.trusted in Ags]
         return SocialNetwork(Ags, tau)
